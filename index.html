@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:url" content="https://apitest.hatchapps.com" />
+    <meta property="og:image" content="social_image.png" />
+    <meta property="og:title" content="Hatch Apps API Tester" />
+    <meta property="og:description" content="Test an API in the browser without coding." />
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <script src="script.js" type="module"></script>
+    <link rel='stylesheet' type='text/css' media='screen' href='/loader/app.css'>
+    <title>Hatch Apps API Tester</title>
+    <style>
+        /* codebox */
+        
+        code {
+            background-color: black;
+            color: greenyellow;
+            padding: 3px 6px;
+        }
+        
+        .codebox {
+            background-color: black;
+            color: white;
+            padding: 20px;
+            display: block;
+            border-radius: 5px;
+            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15)!important;
+        }
+        
+        .codebox code {
+            background-color: black !important;
+            color: greenyellow;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="Loader"></div>
+    <script src="/loader/app.js"></script>
+    <header>
+        <div class="container" style="margin-bottom: 15px; margin-top: 15px;">
+            <nav class="navbar navbar-expand-md navbar-dark">
+                <div class="mx-auto order-0">
+                    <a class="navbar-brand mx-auto" href="#"> <img src="logo.svg" width="180px"></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                    <span class="navbar-toggler-icon"> <i class="fa fa-bars"></i> </span>
+                </button>
+                </div>
+            </nav>
+
+        </div>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="p-4 border bg-white rounded shadow-lg">
+                    <form data-form>
+                        <div class="input-group mb-4">
+                            <select class="form-select flex-grow-0 w-auto" id="change" data-method>
+                      <option value="GET">GET</option>
+                      <option value="POST">POST</option>
+                      <option value="PUT">PUT</option>
+                      <option value="DELETE">DELETE</option>
+                    </select>
+                            <input data-url required class="form-control" type="url" placeholder="https://example.com" value="" />
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="query-params-tab" data-bs-toggle="tab" data-bs-target="#query-params" type="button" role="tab" aria-controls="query-params" aria-selected="true">Query Params</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="request-headers-tab" data-bs-toggle="tab" data-bs-target="#request-headers" type="button" role="tab" aria-controls="request-headers" aria-selected="false">Headers</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="json-tab" data-bs-toggle="tab" data-bs-target="#json" type="button" role="tab" aria-controls="json" aria-selected="false">JSON</button>
+                            </li>
+                        </ul>
+
+                        <!-- Workinf for contents -->
+                        <div class="tab-content p-3 border-top-0 border">
+                            <div class="tab-pane fade show active" id="query-params" role="tabpanel" aria-labelledby="query-params-tab">
+                                <div data-query-params></div>
+                                <button data-add-query-param-btn class="mt-2 btn btn-outline-success" type="button">Add</button>
+                            </div>
+                            <div class="tab-pane fade" id="request-headers" role="tabpanel" aria-labelledby="request-headers-tab">
+                                <div data-request-headers></div>
+                                <button data-add-request-header-btn class="mt-2 btn btn-outline-success" type="button">Add</button>
+                            </div>
+                            <div class="tab-pane fade" id="json" role="tabpanel" aria-labelledby="json-tab">
+                                <div data-json-request-body class="overflow-auto" style="max-height: 200px;"></div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Response HTML -->
+                    <div class="mt-5 d-none" data-response-section>
+                        <h3>Response</h3>
+                        <div class="d-flex my-2">
+                            <div class="me-3">
+                                Status: <span data-status></span>
+                            </div>
+                            <div class="me-3">
+                                Time: <span data-time></span>ms
+                            </div>
+                            <div class="me-3">
+                                Size: <span data-size></span>
+                            </div>
+                        </div>
+
+
+                        <ul class="nav nav-tabs" role="tablist">
+                            <!-- for body -->
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="body-tab" data-bs-toggle="tab" data-bs-target="#body" type="button" role="tab" aria-controls="body" aria-selected="true">Body</button>
+                            </li>
+                            <!-- for Headers -->
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="response-headers-tab" data-bs-toggle="tab" data-bs-target="#response-headers" type="button" role="tab" aria-controls="response-headers" aria-selected="false">Headers</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content p-3 border-top-0 border">
+                            <div class="tab-pane fade show active" id="body" role="tabpanel" aria-labelledby="body-tab">
+                                <div data-json-response-body class="overflow-auto" style="max-height: 200px;"></div>
+                            </div>
+                            <div class="tab-pane fade" id="response-headers" role="tabpanel" aria-labelledby="response-headers-tab">
+                                <div style="display: grid; grid-template-columns: auto 1fr; gap: .5rem 2rem;" data-response-headers></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-md-4">
+                <div class="p-4 border bg-white rounded shadow-lg">
+                    <h4>Code Snippet</h4>
+                    <select id="code_type" class="form-control">
+                        <option>cURL</option>
+                        <option>Go - Native</option>
+                        <option>Javascript - JQuery</option>
+                        <option>NodeJs - Native</option>
+                        <option>PHP - cURL</option>
+                        <option>PHP - Guzzle</option>
+                        <option>Python - http.client</option>
+                        <option>Python - Requests</option>
+                    </select>
+                    <div class="p-2">
+                        <div class="codebox">
+                            <code id="code" title="Click to Copy!">
+                            curl --location --request GET ''
+
+                            <textarea style="display:none"  id="codetext" cols="30" rows="10">curl --location --request GET ''
+                            </textarea>
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- template for query params -->
+    <template data-key-value-template>
+        <div class="input-group my-2" data-key-value-pair>
+            <input type="text" data-key class="form-control" onkeyup="test();" placeholder="Key"/>
+            <input type="text" data-value class="form-control" placeholder="Value" />
+            <button type="button" data-remove-btn class="btn btn-outline-danger">Remove</button>
+        </div>
+  </template>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            $("#success-alert").delay(3000).fadeTo(2000, 500).slideUp(500, function(){
+               $("#success-alert").slideUp(500);
+            });
+
+         });
+     </script>
+
+    <script>
+        function test() {
+            query = document.querySelector("[data-query-params]").getElementsByTagName('input');
+
+            // console.log(query);
+
+            datas = [];
+
+            Object.keys(query).forEach(function(key) {
+
+
+                // console.log(query[key].value);
+
+                index = parseInt(key) + 1;
+
+                obj = {};
+
+                if (index % 2 == 0) {
+                    obj['value'] = query[key].value;
+
+                    datas.push(obj);
+
+                } else {
+                    obj['name'] = query[key].value;
+
+                    datas.push(obj);
+
+                }
+
+            });
+
+
+            // console.log(datas);
+
+
+            types = $('#change').val();
+
+            type = $('#code_type').val();
+
+
+            console.log(types);
+
+            if (types == 'POST') {
+                if (type == 'Go - Native') {
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `_ = writer.WriteField("` + element.name + `",`;
+
+                        } else {
+
+                            data += ` "` + element.value + `")`;
+
+                        }
+
+
+
+                    });
+
+
+                    code = `package main
+
+                        import (
+                        "fmt"
+                        "bytes"
+                        "mime/multipart"
+                        "net/http"
+                        "io/ioutil"
+                        )
+
+                        func main() {
+
+                        url := "https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}"
+                        method := "POST"
+
+                        payload := &bytes.Buffer{}
+                        writer := multipart.NewWriter(payload)
+                        ` + data + `
+                        err := writer.Close()
+                        if err != nil {
+                            fmt.Println(err)
+                            return
+                        }
+
+
+                        client := &http.Client {
+                        }
+                        req, err := http.NewRequest(method, url, payload)
+
+                        if err != nil {
+                            fmt.Println(err)
+                            return
+                        }
+                        req.Header.Add("API-TOKEN", "{{ $data->api->api_key }}")
+
+                        req.Header.Set("Content-Type", writer.FormDataContentType())
+                        res, err := client.Do(req)
+                        if err != nil {
+                            fmt.Println(err)
+                            return
+                        }
+                        defer res.Body.Close()
+
+                        body, err := ioutil.ReadAll(res.Body)
+                        if err != nil {
+                            fmt.Println(err)
+                            return
+                        }
+                        fmt.Println(string(body))
+                        }`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'cURL') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `--form '` + element.name + `=`;
+
+                        } else {
+
+                            data += `"` + element.value + `",`;
+
+                        }
+
+
+
+                    });
+
+
+
+                    code = `curl --location --request POST 'https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}' \
+                                --header 'API-TOKEN: {{ $data->api->api_key }}'` + data;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'Javascript - JQuery') {
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `form.append("` + element.name + `",`;
+
+                        } else {
+
+                            data += `"` + element.value + `");`;
+
+                        }
+
+
+
+                    });
+
+
+                    code = `var form = new FormData();
+                        ` + data + `
+
+                        var settings = {
+                        "url": "https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                            "API-TOKEN": "{{ $data->api->api_key }}"
+                        },
+                        "processData": false,
+                        "mimeType": "multipart/form-data",
+                        "contentType": false,
+                        "data": form
+                        };
+
+                        $.ajax(settings).done(function (response) {
+                        console.log(response);
+                        });`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'NodeJs - Native') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"` + element.name + `\"`;
+
+                        } else {
+
+                            data += `\r\n\r\n` + element.value + `\r\n`;
+
+                        }
+
+
+
+                    });
+
+
+
+                    code = `var https = require('follow-redirects').https;
+                        var fs = require('fs');
+
+                        var options = {
+                        'method': 'POST',
+                        'hostname': 'console.hatchapps.com',
+                        'path': '/api/{{ $data->api->name }}/{{ $data->name }}',
+                        'headers': {
+                            'API-TOKEN': '{{ $data->api->api_key }}'
+                        },
+                        'maxRedirects': 20
+                        };
+
+                        var req = https.request(options, function (res) {
+                        var chunks = [];
+
+                        res.on("data", function (chunk) {
+                            chunks.push(chunk);
+                        });
+
+                        res.on("end", function (chunk) {
+                            var body = Buffer.concat(chunks);
+                            console.log(body.toString());
+                        });
+
+                        res.on("error", function (error) {
+                            console.error(error);
+                        });
+                        });
+
+                        var postData = "` + data + `";
+
+                        req.setHeader('content-type', 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW');
+
+                        req.write(postData);
+
+                        req.end();`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'PHP - cURL') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `'` + element.name + `' => `;
+
+                        } else {
+
+                            data += `'` + element.value + `', `;
+
+                        }
+
+
+
+                    });
+
+
+                    var code = `$curl = curl_init();
+
+                            curl_setopt_array($curl, array(
+                            CURLOPT_URL => 'https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}',
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_POSTFIELDS => array(` + data + `),
+                            CURLOPT_HTTPHEADER => array(
+                                'API-TOKEN: {{ $data->api->api_key }}'
+                            ),
+                            ));
+
+                            $response = curl_exec($curl);
+
+                            curl_close($curl);
+                            echo $response;`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'PHP - Guzzle') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `[
+                                'name' => '` + element.name + `',`;
+
+                        } else {
+
+                            data += `'contents' => '` + element.value + `'
+                                ],`;
+
+                        }
+
+
+
+                    });
+
+
+
+                    code = `$client = new Client();
+                        $headers = [
+                        'API-TOKEN' => '{{ $data->api->api_key }}'
+                        ];
+                        $options = [
+                        'multipart' => [
+                            ` + data + `
+                        ]];
+                        $request = new Request('POST', 'https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}', $headers);
+                        $res = $client->sendAsync($request, $options)->wait();
+                        echo $res->getBody();`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'Python - http.client') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `dataList.append(encode('--' + boundary))
+                                dataList.append(encode('Content-Disposition: form-data; name=` + element.name + `;'))
+
+                                dataList.append(encode('Content-Type: {}'.format('text/plain')))
+                                dataList.append(encode(''))`;
+
+                        } else {
+
+                            data += `
+
+                                dataList.append(encode("` + element.value + `"))`;
+
+                        }
+
+
+
+                    });
+
+
+
+
+
+                    code = `import http.client
+                        import mimetypes
+                        from codecs import encode
+
+                        conn = http.client.HTTPSConnection("console.hatchapps.com")
+                        dataList = []
+                        boundary = 'wL36Yn8afVp8Ag7AmP8qZ0SA4n1v9T'
+                        ` + data + `
+                        dataList.append(encode('--'+boundary+'--'))
+                        dataList.append(encode(''))
+                        body = b'\r\n'.join(dataList)
+                        payload = body
+                        headers = {
+                        'API-TOKEN': '{{ $data->api->api_key }}',
+                        'Content-type': 'multipart/form-data; boundary={}'.format(boundary)
+                        }
+                        conn.request("POST", "/api/{{ $data->api->name }}/{{ $data->name }}", payload, headers)
+                        res = conn.getresponse()
+                        data = res.read()
+                        print(data.decode("utf-8"))`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'Python - Requests') {
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `'` + element.name + `': `;
+
+                        } else {
+
+                            data += `'` + element.value + `',`;
+
+                        }
+
+
+
+                    });
+
+
+                    code = `import requests
+
+                        url = "https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}"
+
+                        payload={` + data + `}
+                        files=[
+
+                        ]
+                        headers = {
+                        'API-TOKEN': '{{ $data->api->api_key }}'
+                        }
+
+                        response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+                        print(response.text)`;
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                }
+
+
+            } else if (types == 'PUT') {
+                if (type == 'Go - Native') {
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `_ = writer.WriteField("` + element.name + `",`;
+
+                        } else {
+
+                            data += ` "` + element.value + `")`;
+
+                        }
+
+
+
+                    });
+
+
+                    code = `package main
+
+                        import (
+                        "fmt"
+                        "bytes"
+                        "mime/multipart"
+                        "net/http"
+                        "io/ioutil"
+                        )
+
+                        func main() {
+
+                        url := "https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}"
+                        method := "PUT"
+
+                        payload := &bytes.Buffer{}
+                        writer := multipart.NewWriter(payload)
+                        ` + data + `
+                        err := writer.Close()
+                        if err != nil {
+                            fmt.Println(err)
+                            return
+                        }
+
+
+                        client := &http.Client {
+                        }
+                        req, err := http.NewRequest(method, url, payload)
+
+                        if err != nil {
+                            fmt.Println(err)
+                            return
+                        }
+                        req.Header.Add("API-TOKEN", "{{ $data->api->api_key }}")
+
+                        req.Header.Set("Content-Type", writer.FormDataContentType())
+                        res, err := client.Do(req)
+                        if err != nil {
+                            fmt.Println(err)
+                            return
+                        }
+                        defer res.Body.Close()
+
+                        body, err := ioutil.ReadAll(res.Body)
+                        if err != nil {
+                            fmt.Println(err)
+                            return
+                        }
+                        fmt.Println(string(body))
+                        }`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'cURL') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `--form '` + element.name + `=`;
+
+                        } else {
+
+                            data += `"` + element.value + `",`;
+
+                        }
+
+
+
+                    });
+
+
+
+                    code = `curl --location --request PUT 'https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}' \
+                                --header 'API-TOKEN: {{ $data->api->api_key }}'` + data;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'Javascript - JQuery') {
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `form.append("` + element.name + `",`;
+
+                        } else {
+
+                            data += `"` + element.value + `");`;
+
+                        }
+
+
+
+                    });
+
+
+                    code = `var form = new FormData();
+                        ` + data + `
+
+                        var settings = {
+                        "url": "https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}",
+                        "method": "PUT",
+                        "timeout": 0,
+                        "headers": {
+                            "API-TOKEN": "{{ $data->api->api_key }}"
+                        },
+                        "processData": false,
+                        "mimeType": "multipart/form-data",
+                        "contentType": false,
+                        "data": form
+                        };
+
+                        $.ajax(settings).done(function (response) {
+                        console.log(response);
+                        });`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'NodeJs - Native') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"` + element.name + `\"`;
+
+                        } else {
+
+                            data += `\r\n\r\n` + element.value + `\r\n`;
+
+                        }
+
+
+
+                    });
+
+
+
+                    code = `var https = require('follow-redirects').https;
+                        var fs = require('fs');
+
+                        var options = {
+                        'method': 'PUT',
+                        'hostname': 'console.hatchapps.com',
+                        'path': '/api/{{ $data->api->name }}/{{ $data->name }}',
+                        'headers': {
+                            'API-TOKEN': '{{ $data->api->api_key }}'
+                        },
+                        'maxRedirects': 20
+                        };
+
+                        var req = https.request(options, function (res) {
+                        var chunks = [];
+
+                        res.on("data", function (chunk) {
+                            chunks.push(chunk);
+                        });
+
+                        res.on("end", function (chunk) {
+                            var body = Buffer.concat(chunks);
+                            console.log(body.toString());
+                        });
+
+                        res.on("error", function (error) {
+                            console.error(error);
+                        });
+                        });
+
+                        var postData = "` + data + `";
+
+                        req.setHeader('content-type', 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW');
+
+                        req.write(postData);
+
+                        req.end();`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'PHP - cURL') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `'` + element.name + `' => `;
+
+                        } else {
+
+                            data += `'` + element.value + `', `;
+
+                        }
+
+
+
+                    });
+
+
+                    var code = `$curl = curl_init();
+
+                            curl_setopt_array($curl, array(
+                            CURLOPT_URL => 'https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}',
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'PUT',
+                            CURLOPT_POSTFIELDS => array(` + data + `),
+                            CURLOPT_HTTPHEADER => array(
+                                'API-TOKEN: {{ $data->api->api_key }}'
+                            ),
+                            ));
+
+                            $response = curl_exec($curl);
+
+                            curl_close($curl);
+                            echo $response;`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'PHP - Guzzle') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `[
+                                'name' => '` + element.name + `',`;
+
+                        } else {
+
+                            data += `'contents' => '` + element.value + `'
+                                ],`;
+
+                        }
+
+
+
+                    });
+
+
+
+                    code = `$client = new Client();
+                        $headers = [
+                        'API-TOKEN' => '{{ $data->api->api_key }}'
+                        ];
+                        $options = [
+                        'multipart' => [
+                            ` + data + `
+                        ]];
+                        $request = new Request('PUT', 'https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}', $headers);
+                        $res = $client->sendAsync($request, $options)->wait();
+                        echo $res->getBody();`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'Python - http.client') {
+
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `dataList.append(encode('--' + boundary))
+                                dataList.append(encode('Content-Disposition: form-data; name=` + element.name + `;'))
+
+                                dataList.append(encode('Content-Type: {}'.format('text/plain')))
+                                dataList.append(encode(''))`;
+
+                        } else {
+
+                            data += `
+
+                                dataList.append(encode("` + element.value + `"))`;
+
+                        }
+
+
+
+                    });
+
+
+
+
+
+                    code = `import http.client
+                        import mimetypes
+                        from codecs import encode
+
+                        conn = http.client.HTTPSConnection("console.hatchapps.com")
+                        dataList = []
+                        boundary = 'wL36Yn8afVp8Ag7AmP8qZ0SA4n1v9T'
+                        ` + data + `
+                        dataList.append(encode('--'+boundary+'--'))
+                        dataList.append(encode(''))
+                        body = b'\r\n'.join(dataList)
+                        payload = body
+                        headers = {
+                        'API-TOKEN': '{{ $data->api->api_key }}',
+                        'Content-type': 'multipart/form-data; boundary={}'.format(boundary)
+                        }
+                        conn.request("PUT", "/api/{{ $data->api->name }}/{{ $data->name }}", payload, headers)
+                        res = conn.getresponse()
+                        data = res.read()
+                        print(data.decode("utf-8"))`;
+
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                } else if (type == 'Python - Requests') {
+
+
+                    data = '';
+
+                    datas.forEach((element, index) => {
+
+                        index = parseInt(index) + 1;
+
+                        if (index % 2 != 0) {
+
+                            data += `'` + element.name + `': `;
+
+                        } else {
+
+                            data += `'` + element.value + `',`;
+
+                        }
+
+
+
+                    });
+
+
+                    code = `import requests
+
+                        url = "https://console.hatchapps.com/api/{{ $data->api->name }}/{{ $data->name }}"
+
+                        payload={` + data + `}
+                        files=[
+
+                        ]
+                        headers = {
+                        'API-TOKEN': '{{ $data->api->api_key }}'
+                        }
+
+                        response = requests.request("PUT", url, headers=headers, data=payload, files=files)
+
+                        print(response.text)`;
+                    $('#code').html(code);
+                    $('#codetext').val(code);
+                }
+
+
+            }
+        }
+    </script>
+
+<script>
+    var loader = document.getElementById('Loader');
+    
+    window.addEventListener("load", function(){
+     loader.style.display = 'none';
+    })
+ </script>
+
+
+
+</body>
+
+</html>
